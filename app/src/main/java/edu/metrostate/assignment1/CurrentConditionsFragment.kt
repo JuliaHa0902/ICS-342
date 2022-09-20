@@ -11,7 +11,6 @@ class CurrentConditionsFragment: Fragment (R.layout.fragment_current_conditions)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding = FragmentCurrentConditionsBinding.bind(view)
-        binding.currentTemp.text = "88"
         binding.forecastButton.setOnClickListener {
             val forecast = Forecast("72")
             val action = CurrentConditionsFragmentDirections.actionCurrentConditionsFragmentToForecastFragment(forecast)
