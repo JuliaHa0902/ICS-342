@@ -53,11 +53,11 @@ class ForecastViewHolder (view: View): RecyclerView.ViewHolder (view) {
 
     fun bind (data: DayForecast) {
         forecastDay.text = getDate (data.date)
-        forecastSunRise.text = String.format("Sunrise: %s", getTime(data.sunrise))
-        forecastSunSet.text = String.format("Sunset: %s", getTime(data.sunset))
-        forecastTemp.text = String.format("Temp: %.1f°", data.temp.day)
-        forecastHigh.text = String.format("High: %.1f°", data.temp.max)
-        forecastLow.text = String.format("Low: %.1f°", data.temp.min)
+        forecastSunRise.text = String.format("Sunrise: %sam", getTime(data.sunrise))
+        forecastSunSet.text = String.format("Sunset: %spm", getTime(data.sunset))
+        forecastTemp.text = String.format("Temp: %.0f°", data.temp.day)
+        forecastHigh.text = String.format("High: %.0f°", data.temp.max)
+        forecastLow.text = String.format("Low: %.0f°", data.temp.min)
     }
 
 
