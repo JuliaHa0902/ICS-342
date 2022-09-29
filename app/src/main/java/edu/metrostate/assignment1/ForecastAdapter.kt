@@ -5,15 +5,15 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import android.content.res.Resources
+import edu.metrostate.assignment1.databinding.ViewForecastItemBinding
 import java.time.LocalDateTime.ofEpochSecond
 import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
 
 class ForecastAdapter (private val data:List<DayForecast>): RecyclerView.Adapter<ForecastViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ForecastViewHolder {
-        val view = LayoutInflater.from(parent.context)
-            .inflate(R.layout.view_forecast_item, parent, false)
-        return ForecastViewHolder(view)
+        return ForecastViewHolder(ViewForecastItemBinding.inflate(LayoutInflater.from(parent.context), parent, false))
     }
 
     override fun onBindViewHolder(holder: ForecastViewHolder, position: Int) {
@@ -22,22 +22,7 @@ class ForecastAdapter (private val data:List<DayForecast>): RecyclerView.Adapter
 
     override fun getItemCount(): Int = data.size
 }
-class ForecastViewHolder (view: View): RecyclerView.ViewHolder (view) {
-    private val forecastTemp: TextView
-    private val forecastDay: TextView
-    private val forecastSunRise: TextView
-    private val forecastSunSet: TextView
-    private val forecastHigh: TextView
-    private val forecastLow: TextView
-
-    init {
-        forecastTemp = view.findViewById(R.id.forecast_temp)
-        forecastDay = view.findViewById(R.id.forecast_day)
-        forecastSunRise = view.findViewById(R.id.forecast_sunrise)
-        forecastSunSet = view.findViewById(R.id.forecast_sunset)
-        forecastHigh = view.findViewById(R.id.forecast_high)
-        forecastLow = view.findViewById(R.id.forecast_low)
-    }
+class ForecastViewHolder (private val binding: ViewForecastItemBinding): RecyclerView.ViewHolder (binding.root) {
 
     private fun getDate(dateTimeStamp: Long): String {
         val formatter = DateTimeFormatter.ofPattern("MMM dd")
@@ -52,13 +37,12 @@ class ForecastViewHolder (view: View): RecyclerView.ViewHolder (view) {
     }
 
     fun bind (data: DayForecast) {
-        forecastDay.text = getDate (data.date)
-        forecastSunRise.text = String.format("Sunrise: %sam", getTime(data.sunrise))
-        forecastSunSet.text = String.format("Sunset: %spm", getTime(data.sunset))
-        forecastTemp.text = String.format("Temp: %.0f°", data.temp.day)
-        forecastHigh.text = String.format("High: %.0f°", data.temp.max)
-        forecastLow.text = String.format("Low: %.0f°", data.temp.min)
+        val resources = binding.root.context.resources
+        binding.forecastDay.text = getDate (data.date)
+        binding.forecastSunrise.text = resources.getString(R.string.item_sunrise, getTime (data.sunrise))
+        binding.forecastSunset.text = resources.getString(R.string.item_sunset, getTime (data.sunset))
+        binding.forecastTemp.text = resources.getString(R.string.item_temp, data.temp.day)
+        binding.forecastHigh.text = resources.getString(R.string.item_high, data.temp.max)
+        binding.forecastLow.text = resources.getString(R.string.item_low, data.temp.min)
     }
-
-
 }
