@@ -7,6 +7,9 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -16,35 +19,37 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
+import coil.compose.AsyncImage
 import edu.metrostate.assignment1.*
 import edu.metrostate.assignment1.R
+import edu.metrostate.assignment1.models.DayForecast
+import edu.metrostate.assignment1.models.ForecastItem
+import edu.metrostate.assignment1.models.ForecastTemp
 
-val firstDay = 1663804118L
-val dayTime = 86400
-val timeToNight = 43300
-val forecastData = (0..15).map {
-    DayForecast(
-        firstDay + it * dayTime,
-        firstDay + it * dayTime,
-        firstDay + it * dayTime + timeToNight,
-        temp = ForecastTemp(70.0F + it, 69.0F, 73.0F + it),
-        1023.0F,
-        90)
-}
+
 @Composable
-fun ForecastScreen () {
-    LazyColumn(
-        modifier = Modifier.fillMaxWidth(),
-        verticalArrangement = Arrangement.spacedBy(13.dp),
-    ) {
-        items(items = forecastData) {item: DayForecast ->
-            ForecastRow(item = item)
+fun ForecastScreen (
+    viewModel: ForecastViewModel = hiltViewModel(),
+) {
+    val state by viewModel.forecastData.collectAsState(null)
+    LaunchedEffect(Unit) {
+        viewModel.fetchData()
+    }
+    state?.let {
+        LazyColumn(
+            modifier = Modifier.fillMaxWidth(),
+            verticalArrangement = Arrangement.spacedBy(13.dp),
+        ) {
+            items(items = it.forecastData) {item: ForecastItem ->
+                ForecastRow(item = item)
+            }
         }
     }
 }
 
 @Composable
-private fun ForecastRow (item: DayForecast) {
+private fun ForecastRow (item: ForecastItem) {
     Row(
         modifier = Modifier.background(Color.White),
         verticalAlignment = Alignment.CenterVertically,
@@ -52,7 +57,10 @@ private fun ForecastRow (item: DayForecast) {
         val textStyle = TextStyle (
             fontSize = 15.sp
         )
-        Image(painter = painterResource(id = R.drawable.sun_icon), contentDescription = "")
+        AsyncImage(
+            model = String.format("https://openweathermap.org/img/wn/%s@2x.png", item.weatherData.firstOrNull()?.iconName),
+            modifier = Modifier.size(80.dp),
+            contentDescription = "Weather Icon")
         Text(text = item.date.toDate(), style = TextStyle(fontSize = 19.sp))
         Spacer(modifier = Modifier.weight(1f, fill = true))
         Column {
@@ -74,6 +82,5 @@ private fun ForecastRow (item: DayForecast) {
 @Preview
 @Composable
 private fun ForecastRowPreview () {
-//    ForecastRow (item = forecastData[0])
     ForecastScreen()
 }

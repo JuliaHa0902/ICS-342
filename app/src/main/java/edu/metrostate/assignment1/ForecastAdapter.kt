@@ -1,12 +1,10 @@
 package edu.metrostate.assignment1
 
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import android.content.res.Resources
 import edu.metrostate.assignment1.databinding.ViewForecastItemBinding
+import edu.metrostate.assignment1.models.DayForecast
 import java.time.LocalDateTime.ofEpochSecond
 import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter

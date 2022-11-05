@@ -1,12 +1,12 @@
 <resources>
     <string name="app_name">My Weather App</string>
     <string name="city_name">St. Paul, MN</string>
-    <string name="current_temp">72&#xb0;</string>
-    <string name="feel">Feels like 78&#xb0;</string>
-    <string name="low">Low 65&#xb0;</string>
-    <string name="high">High 80&#xb0;</string>
-    <string name="humidity">Humidity 100%</string>
-    <string name="pressure">Pressure 1023 hPa</string>
+    <string name="current_temp">%s&#xb0;</string>
+    <string name="feel">Feels like %d&#xb0;</string>
+    <string name="low">Low %d&#xb0;</string>
+    <string name="high">High %d&#xb0;</string>
+    <string name="humidity">Humidity %d%%</string>
+    <string name="pressure">Pressure %d hPa</string>
     <string name="forecast">FORECAST</string>
     <string name="item_sunrise">Sunrise: %sam</string>
     <string name="item_sunset">Sunset: %spm</string>

@@ -1,4 +1,4 @@
-package edu.metrostate.assignment1
+package edu.metrostate.assignment1.models
 
 import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
