@@ -26,20 +26,27 @@ import androidx.lifecycle.LifecycleOwner
 import coil.compose.AsyncImage
 import edu.metrostate.assignment1.R
 import edu.metrostate.assignment1.models.CurrentConditions
+import edu.metrostate.assignment1.models.LatitudeLongtitude
 
 @Composable
 fun CurrentConditions (
+    latitudeLongtitude: LatitudeLongtitude?,
     viewModel: CurrentConditionsViewModel = hiltViewModel(),
+    onGetWeatherForMyLocationClick:() -> Unit,
     onForecastButtonClick: () -> Unit
 ) {
     val state by viewModel.currentConditions.collectAsState(null)
-    LaunchedEffect(Unit) {
-        viewModel.fetchData()
+    if (latitudeLongtitude != null) {
+        LaunchedEffect(Unit) {
+            viewModel.fetchCurrentLocationData(latitudeLongtitude)
+        }
+    } else {
+        LaunchedEffect(Unit) {
+            viewModel.fetchData()
+        }
     }
     state?.let {
-        CurrentConditionsContent(it) {
-            onForecastButtonClick()
-        }
+        CurrentConditionsContent(it, onGetWeatherForMyLocationClick, onForecastButtonClick)
     }
 
 }
@@ -47,6 +54,7 @@ fun CurrentConditions (
 @Composable
 private fun CurrentConditionsContent(
     currentConditions: CurrentConditions,
+    onGetWeatherForMyLocationClick:() -> Unit,
     onForecastButtonClick: () -> Unit,
 ) {
     Column (
@@ -56,7 +64,7 @@ private fun CurrentConditionsContent(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
-            text = stringResource(id = R.string.city_name),
+            text = currentConditions.cityName,
             style = TextStyle(
                 fontWeight = FontWeight(680),
                 fontSize = 17.sp
@@ -105,6 +113,10 @@ private fun CurrentConditionsContent(
         Spacer(modifier = Modifier.height(24.dp))
         Button(onClick = onForecastButtonClick) {
             Text(text = stringResource(id = R.string.forecast))
+        }
+        Spacer(modifier = Modifier.height(24.dp))
+        Button(onClick = onGetWeatherForMyLocationClick) {
+            Text(text = stringResource(id = R.string.get_weather_for_my_location))
         }
     }
 }
