@@ -22,6 +22,11 @@ data class ForecastItem (
     @Json(name = "weather") val weatherData: List<IconData>,
 )
 
+data class CityData (
+    @Json(name = "name") val name: String
+)
+
 data class ForecastData(
+    @Json(name = "city") val city: CityData,
     @Json(name = "list") val forecastData:List<ForecastItem>,
 )

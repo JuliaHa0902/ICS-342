@@ -26,23 +26,34 @@ import edu.metrostate.assignment1.R
 import edu.metrostate.assignment1.models.DayForecast
 import edu.metrostate.assignment1.models.ForecastItem
 import edu.metrostate.assignment1.models.ForecastTemp
+import edu.metrostate.assignment1.models.LatitudeLongtitude
 
 
 @Composable
 fun ForecastScreen (
     viewModel: ForecastViewModel = hiltViewModel(),
+    latitudeLongtitude: LatitudeLongtitude?
 ) {
     val state by viewModel.forecastData.collectAsState(null)
-    LaunchedEffect(Unit) {
-        viewModel.fetchData()
+    if (latitudeLongtitude != null) {
+        LaunchedEffect(Unit) {
+            viewModel.fetchCurrentLocationData(latitudeLongtitude)
+        }
+    } else {
+        LaunchedEffect(Unit) {
+            viewModel.fetchData()
+        }
     }
     state?.let {
-        LazyColumn(
-            modifier = Modifier.fillMaxWidth(),
-            verticalArrangement = Arrangement.spacedBy(13.dp),
-        ) {
-            items(items = it.forecastData) {item: ForecastItem ->
-                ForecastRow(item = item)
+        Column {
+            Text(text = it.city.name, style = TextStyle(fontSize = 19.sp))
+            LazyColumn(
+                modifier = Modifier.fillMaxWidth(),
+                verticalArrangement = Arrangement.spacedBy(13.dp),
+            ) {
+                items(items = it.forecastData) { item: ForecastItem ->
+                    ForecastRow(item = item)
+                }
             }
         }
     }
@@ -79,8 +90,8 @@ private fun ForecastRow (item: ForecastItem) {
 
 }
 
-@Preview
-@Composable
-private fun ForecastRowPreview () {
-    ForecastScreen()
-}
+//@Preview
+//@Composable
+//private fun ForecastRowPreview () {
+//    ForecastScreen()
+//}
