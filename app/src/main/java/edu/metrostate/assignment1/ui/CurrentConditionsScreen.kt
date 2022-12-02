@@ -1,12 +1,18 @@
 package edu.metrostate.assignment1.ui
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Button
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
@@ -15,10 +21,32 @@ import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.LifecycleOwner
+import coil.compose.AsyncImage
 import edu.metrostate.assignment1.R
+import edu.metrostate.assignment1.models.CurrentConditions
 
 @Composable
 fun CurrentConditions (
+    viewModel: CurrentConditionsViewModel = hiltViewModel(),
+    onForecastButtonClick: () -> Unit
+) {
+    val state by viewModel.currentConditions.collectAsState(null)
+    LaunchedEffect(Unit) {
+        viewModel.fetchData()
+    }
+    state?.let {
+        CurrentConditionsContent(it) {
+            onForecastButtonClick()
+        }
+    }
+
+}
+
+@Composable
+private fun CurrentConditionsContent(
+    currentConditions: CurrentConditions,
     onForecastButtonClick: () -> Unit,
 ) {
     Column (
@@ -42,23 +70,23 @@ fun CurrentConditions (
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(
-                    text = stringResource(id = R.string.current_temp),
+                    text = stringResource(id = R.string.current_temp, currentConditions.conditions.temperature.toInt()),
                     style = TextStyle(
                         fontWeight = FontWeight(680),
                         fontSize = 72.sp
                     )
                 )
                 Text(
-                    text = stringResource(id = R.string.feel),
+                    text = stringResource(id = R.string.feel, currentConditions.conditions.feelsLike.toInt()),
                     style = TextStyle(
                         fontSize = 12.sp
                     )
                 )
             }
             Spacer(modifier = Modifier.weight(1f, fill = true))
-            Image(
-                modifier = Modifier.size(72.dp),
-                painter = painterResource(R.drawable.sun_icon),
+            AsyncImage(
+                model = String.format("https://openweathermap.org/img/wn/%s@2x.png", currentConditions.weatherData.firstOrNull()?.iconName),
+                modifier = Modifier.size(120.dp),
                 contentDescription = "Sunny")
         }
         Spacer(modifier = Modifier.height(24.dp))
@@ -69,10 +97,10 @@ fun CurrentConditions (
             val textStyle = TextStyle(
                 fontSize = 17.sp
             )
-            Text(text = stringResource(id = R.string.low), style = textStyle)
-            Text(text = stringResource(id = R.string.high), style = textStyle)
-            Text(text = stringResource(id = R.string.humidity), style = textStyle)
-            Text(text = stringResource(id = R.string.pressure), style = textStyle)
+            Text(text = stringResource(id = R.string.low, currentConditions.conditions.minTemperature.toInt()), style = textStyle)
+            Text(text = stringResource(id = R.string.high, currentConditions.conditions.maxTemperature.toInt()), style = textStyle)
+            Text(text = stringResource(id = R.string.humidity,currentConditions.conditions.humidity.toInt()), style = textStyle)
+            Text(text = stringResource(id = R.string.pressure, currentConditions.conditions.pressure.toInt()), style = textStyle)
         }
         Spacer(modifier = Modifier.height(24.dp))
         Button(onClick = onForecastButtonClick) {
@@ -81,13 +109,13 @@ fun CurrentConditions (
     }
 }
 
-@Preview(
-    "CurrentCondition",
-    device = Devices.PIXEL_4,
-    showBackground = true,
-    showSystemUi = true,
-)
-@Composable
-fun CurrentConditionsScreenPreview () {
-    CurrentConditions {}
-}
+//@Preview(
+//    "CurrentCondition",
+//    device = Devices.PIXEL_4,
+//    showBackground = true,
+//    showSystemUi = true,
+//)
+//@Composable
+//fun CurrentConditionsScreenPreview () {
+//    CurrentConditions {}
+//}
